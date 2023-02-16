@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Dashboard</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    table#customers {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+    
+    #customers td, #customers th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+    
+    .tryiticon {
+      background-color: #4CAF50;
+      color: #fff!important;
+      text-decoration: none;
+      padding: 0 8px 4px 8px;
+      border-radius: 50px;
+      font-size: 15px;
+      position: absolute;
+      margin-left: 6px;
+      transition: padding 0.2s;
+      
+    }
+    .tryiticon span{
+      color:#fff!important;
+      font-size:14px;
+      font-weight:normal;
+      position:absolute;
+      width:0px;
+      overflow:hidden;
+      transition: width 0.2;
+    }
+    
+    .tryiticon:hover {
+      padding:0 12px 4px 116px;
+    }
+    
+    .tryiticon:hover span{
+      width:116px;
+      padding-top:2px;
+      left:10px;
+    }
+    
+    .htmltut_table, .htmltut_table th, .htmltut_table td
+    {
+    border:1px solid black;
+    }
+    .htmltut_table1, .htmltut_table1 th, .htmltut_table1 td
+    {
+    border:1px solid black;
+    }
+    .htmltut_table1 th, .htmltut_table1 td
+    {
+    padding:5px;
+    }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+  <div class="row content">
+    
+    <div class="col-sm-9">
+      <div class="well" style="overflow-x:auto;">
+        <h1>MongoDB <span class="color_h1">Dashboard</span></h1>
+                    <hr>
+                        <p class="intro">This shows MongoDB audit logs.</p>
+                    <hr>
+      </div>
+      <script type="text/javascript">
+        
+        async function getAuditLogs() {
+            // set your https endpoint here
+            var apiUrl = 'https://asia-south1.gcp.data.mongodb-api.com/app/application-0-lhtll/endpoint/auditLogs?limit=20&skip=0';
+            try {
+                let res = await fetch(apiUrl);
+                return await res.json();
+            } catch (error) {
+                console.log(error);
+            }
+}
+
+        async function viewLogs()
+        {
+                var logs = await getAuditLogs();
+                let html =  `
+                    <h1>MongoDB <span class="color_h1">Dashboard</span></h1>
+                    <hr>
+                        <p class="intro">This shows all the MongoDB bad design practices.</p>
+                    <hr>
+                        <div class="w3-example">
+                            <h3>Violations</h3>
+                            <div class="w3-white w3-padding notranslate w3-padding-16">
+                                <table class="ws-table-all" id="customers">
+                                    <tr>
+                                        <th>timestamp</th>
+                                        <th>Namespace</th>
+                                        <th>Query</th>
+                                        <th>User</th>
+                                    </tr>
+                                `;
+                for await (const element of logs) {
+                    let htmlSegment = ``;
+                    let ts = element.ts.$date;
+                    let query = JSON.stringify(element.args);
+                    let user = JSON.stringify(element.users);
+                        htmlSubSegment =   `
+                                            <tr>
+                                                <td>${ts}</td>
+                                                <td>${element.namespace}</td>
+                                                <td>${query}</td>
+                                                <td>${user}</td>
+                                            </tr>`;
+                        htmlSegment  = htmlSegment + htmlSubSegment; 
+                    html = await html + htmlSegment;
+                };
+                html += `</table></div></div><hr>`
+            
+            
+            let container =  document.querySelector('.well');
+            console.log(html);
+            container.innerHTML = html;
+        }
+        viewLogs();
+       </script>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
