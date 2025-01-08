@@ -89,7 +89,7 @@ exports = async function () {
         })
         .on('end', async function () {
             console.log("Sending data to database");
-            context.services.get("cluster0").db("contReview").collection("auditLog").insertMany(parsed_log_summary)
+            context.services.get("cluster0").db("audit").collection("audit").insertMany(parsed_log_summary)
                 .then(result => console.log(`Successfully inserted items with _id: ${EJSON.stringify(result)}`))
                 .catch(err => console.error(`Failed to insert items: ${err}`));
         });
