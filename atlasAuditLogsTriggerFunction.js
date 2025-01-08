@@ -78,6 +78,7 @@ exports = async function () {
                 // Parse Log Line to JSON
                 //console.log(log_line);
                 let log = JSON.parse(log_line);
+                log.uuid = "";
                 parsed_log_summary.push(log);
             }
             // resume the read stream, possibly from a callback
@@ -93,7 +94,7 @@ exports = async function () {
                 .catch(err => console.error(`Failed to insert items: ${err}`));
         });
 
-    var auditDoc = { "value": unzipped };
+    // var auditDoc = { "value": unzipped };
 
 
     return "executed";
